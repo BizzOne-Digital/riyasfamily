@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #fff9f0;
+    color: #1d1b16;
+    font-family: 'Montserrat', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-lg font-semibold text-sm tracking-wide hover:bg-red-800 transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+  .btn-outline {
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold text-sm tracking-wide hover:bg-primary hover:text-white transition-all duration-200;
+  }
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-outline-variant overflow-hidden hover:shadow-md transition-shadow duration-200;
+  }
+  .category-badge {
+    @apply text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-secondary;
+  }
+  .status-badge-received { @apply bg-blue-100 text-blue-800; }
+  .status-badge-preparing { @apply bg-yellow-100 text-yellow-800; }
+  .status-badge-ready { @apply bg-green-100 text-green-800; }
+  .status-badge-delivered { @apply bg-gray-100 text-gray-700; }
+  .status-badge-cancelled { @apply bg-red-100 text-red-700; }
+}
+
+/* ── Scroll fix: page always starts at top on route change ── */
+html {
+  scroll-behavior: auto;   /* NO smooth here — breaks scroll-to-top */
+}
+
+/* Hero overlay */
+.hero-overlay {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 100%);
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.45s ease-out both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
