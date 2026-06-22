@@ -8,7 +8,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://riyas-dining.vercel.app', 'https://your-frontend-domain.vercel.app']
+    ? process.env.FRONTEND_URL
     : 'http://localhost:3000',
   credentials: true
 }));
@@ -21,7 +21,7 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/upload', require('./routes/upload'));
 
-// Health check route
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: "Riya's Family Dining API is running" });
 });
