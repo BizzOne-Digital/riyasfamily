@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
+
 // SVG Icons
 const MenuIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -27,12 +28,13 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-outline-variant shadow-sm">
       <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-headline font-bold text-primary tracking-tight">Riya's</span>
-          <span className="text-sm font-body text-on-surface-variant hidden sm:block">Family Dining</span>
-        </Link>
-
+      <Link to="/" className="flex items-center">
+  <img
+    src="/logo.png"
+    alt="Riya's Family Dining"
+    className="h-16 w-auto object-contain"
+  />
+</Link>
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map(link => (

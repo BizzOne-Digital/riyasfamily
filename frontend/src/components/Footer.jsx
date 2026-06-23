@@ -24,7 +24,13 @@ export default function Footer() {
       <div className="max-w-screen-xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Brand */}
         <div>
-          <h3 className="font-headline text-2xl font-bold text-white mb-3">Riya's Family Dining</h3>
+          <Link to="/" className="flex items-center">
+  <img
+    src="/logo.png"
+    alt="Riya's Family Dining"
+    className="h-16 w-auto object-contain"
+  />
+</Link>
           <p className="text-sm text-[#c8c6c5] leading-relaxed">
             Fresh food, family atmosphere. Dine-in, takeout, and delivery — always made with love.
           </p>
