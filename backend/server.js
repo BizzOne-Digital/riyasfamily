@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS — allow multiple origins
+// CORS
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
@@ -14,11 +14,8 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error('CORS: origin not allowed — ' + origin));
   },
   credentials: true
@@ -38,17 +35,40 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: "Riya's Family Dining API is running" });
 });
 
-// Root — so backend URL doesn't show 404
+// Root
 app.get('/', (req, res) => {
   res.json({ message: "Riya's Family Dining API", version: '1.0.0', status: 'running' });
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
+// ── MongoDB connection with auto-reconnect ──────────────
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000, // 10 sec timeout
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+    });
+    console.log('✅ MongoDB Connected');
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    // Retry after 5 seconds
+    setTimeout(connectDB, 5000);
+  }
+};
+
+// Auto reconnect on disconnect
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️ MongoDB disconnected — retrying...');
+  setTimeout(connectDB, 5000);
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB error:', err.message);
+});
+
+connectDB();
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 module.exports = app;
