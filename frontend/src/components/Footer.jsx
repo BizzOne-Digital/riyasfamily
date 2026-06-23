@@ -20,7 +20,7 @@ const MapIcon = () => (
 
 export default function Footer() {
   return (
-    <footer className="bg-[#32302a] text-[#f6f0e7] mt-16">
+    <footer className="bg-[white] text-[#32302a] mt-16">
       <div className="max-w-screen-xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* Brand */}
         <div>
@@ -31,18 +31,18 @@ export default function Footer() {
     className="h-16 w-auto object-contain"
   />
 </Link>
-          <p className="text-sm text-[#c8c6c5] leading-relaxed">
+          <p className="text-sm text-[#32302a] leading-relaxed">
             Fresh food, family atmosphere. Dine-in, takeout, and delivery — always made with love.
           </p>
         </div>
 
         {/* Quick Links */}
         <div>
-          <h4 className="font-body font-semibold uppercase tracking-wide text-xs mb-4 text-[#c8c6c5]">Quick Links</h4>
+          <h4 className="font-body font-semibold uppercase tracking-wide text-xs mb-4 text-[#32302a]">Quick Links</h4>
           <ul className="space-y-2">
             {[['Home', '/'], ['Menu', '/menu'], ['Order Online', '/order'], ['Contact', '/contact']].map(([label, to]) => (
               <li key={to}>
-                <Link to={to} className="text-sm text-[#f6f0e7] hover:text-[#fc820c] transition-colors">{label}</Link>
+                <Link to={to} className="text-sm text-[#32302a] hover:text-[#fc820c] transition-colors">{label}</Link>
               </li>
             ))}
           </ul>
@@ -50,7 +50,7 @@ export default function Footer() {
 
         {/* Contact Info */}
         <div>
-          <h4 className="font-body font-semibold uppercase tracking-wide text-xs mb-4 text-[#c8c6c5]">Contact</h4>
+          <h4 className="font-body font-semibold uppercase tracking-wide text-xs mb-4 text-[#32302a]">Contact</h4>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <MapIcon />
@@ -71,7 +71,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-[#474746] px-6 py-4 text-center text-xs text-[#c8c6c5]">
+      <div className="border-t border-[#474746] px-6 py-4 text-center text-xs text-[#32302a]">
         © {new Date().getFullYear()} Riya's Family Dining. All rights reserved.
         <span className="mx-2">·</span>
         <Link to="/admin/login" className="hover:text-white transition-colors">Staff Login</Link>
