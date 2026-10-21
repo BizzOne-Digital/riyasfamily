@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api'
+import PromoBanner from '../components/PromoBanner'
 
 // SVG Icons
 const StarIcon = () => (
@@ -40,20 +41,20 @@ const categories = [
     img: 'https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&q=80',
   },
   {
-    name: 'Main Courses',
+    name: 'Burgers',
+    img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80',
+  },
+  {
+    name: 'Main Entrees',
     img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80',
   },
   {
-    name: 'Family Meals',
-    img: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80',
+    name: 'Pastas & Bowls',
+    img: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80',
   },
   {
-    name: 'Desserts',
-    img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80',
-  },
-  {
-    name: 'Beverages',
-    img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80',
+    name: 'Salads',
+    img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
   },
 ]
 
@@ -145,6 +146,9 @@ export default function HomePage() {
           <Link to="/menu" className="btn-outline">See Full Menu</Link>
         </div>
       </section>
+
+      {/* Live promotions (Admin → Promotions) */}
+      <PromoBanner />
 
       {/* Popular Items (if any from API) */}
       {popularItems.length > 0 && (

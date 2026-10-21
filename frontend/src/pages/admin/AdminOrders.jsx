@@ -72,12 +72,26 @@ export default function AdminOrders() {
                   {/* Items */}
                   <div className="text-sm text-on-surface space-y-1">
                     {order.items.map((item, i) => (
-                      <div key={i} className="flex justify-between">
-                        <span>{item.qty}x {item.name}</span>
-                        <span className="text-on-surface-variant">${(item.price * item.qty).toFixed(2)}</span>
+                      <div key={i}>
+                        <div className="flex justify-between">
+                          <span>{item.quantity}x {item.name}</span>
+                          <span className="text-on-surface-variant">${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                        {item.options?.length > 0 && (
+                          <p className="text-xs text-on-surface-variant pl-5">
+                            {item.options.map(o => o.name + (o.price ? ` (+$${o.price.toFixed(2)})` : '')).join(', ')}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
+                  {order.discount > 0 && (
+                    <div className="text-sm flex justify-between text-green-700 mt-1">
+                      <span>Promo: {order.promotion?.title}{order.promotion?.code ? ` (${order.promotion.code})` : ''}</span>
+                      <span>-${order.discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {order.paymentMethod && <p className="text-xs mt-2 font-semibold">Payment: {order.paymentMethod}</p>}
                   {order.notes && <p className="text-xs mt-2 italic text-on-surface-variant">Note: {order.notes}</p>}
                 </div>
 

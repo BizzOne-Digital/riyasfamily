@@ -14,11 +14,16 @@ const orderSchema = new mongoose.Schema({
     {
       menuItem: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' },
       name: String,
-      price: Number,
-      quantity: { type: Number, required: true }
+      price: Number, // unit price including options
+      quantity: { type: Number, required: true },
+      options: [{ group: String, name: String, price: Number }]
     }
   ],
+  subtotal: { type: Number },
+  promotion: { title: String, code: String },
+  discount: { type: Number, default: 0 },
   totalAmount: { type: Number, required: true },
+  paymentMethod: { type: String },
   status: {
     type: String,
     enum: ['Received', 'Preparing', 'Ready', 'Out for Delivery', 'Delivered', 'Cancelled'],

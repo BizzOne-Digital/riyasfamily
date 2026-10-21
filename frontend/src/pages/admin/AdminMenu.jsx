@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import AdminLayout from '../../components/AdminLayout'
 import api from '../../api'
 
-const categories = ['Appetizers', 'Main Courses', 'Family Meals', 'Desserts', 'Beverages']
+const categories = ['Appetizers', 'Soups', 'Salads', 'Burgers', 'Sandwiches & Wraps', 'Poutines', 'Lighter Meals', 'Main Entrees', 'Pastas & Bowls', 'Gluten Free']
 const defaultForm = {
-  name: '', description: '', price: '', category: 'Main Courses',
-  image: '', imagePublicId: '', isAvailable: true, isPopular: false, dietaryTags: ''
+  name: '', description: '', price: '', category: 'Main Entrees',
+  image: '', imagePublicId: '', isAvailable: true, isPopular: false, dietaryTags: '', optionGroups: []
 }
 
 // ── SVG Icons ──────────────────────────────────────────────
@@ -196,6 +196,86 @@ function ImageUploader({ value, publicId, onChange }) {
   )
 }
 
+// ── Add-ons / Options Editor ────────────────────────────────
+const inputCls = 'w-full border border-outline-variant rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-primary'
+
+function OptionGroupsEditor({ groups, onChange }) {
+  const updateGroup = (gi, patch) => onChange(groups.map((g, i) => i === gi ? { ...g, ...patch } : g))
+  const updateOption = (gi, oi, patch) =>
+    updateGroup(gi, { options: groups[gi].options.map((o, i) => i === oi ? { ...o, ...patch } : o) })
+
+  return (
+    <div>
+      <label className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant mb-1 block">Add-ons &amp; Choices</label>
+      <p className="text-xs text-on-surface-variant mb-2">e.g. "Choose a Side" (required, pick 1) or "Extras" like Add Chicken +$5.</p>
+
+      <div className="space-y-3">
+        {groups.map((g, gi) => (
+          <div key={gi} className="border border-outline-variant rounded-lg p-3 bg-surface-container-low">
+            <div className="flex gap-2 items-center mb-2">
+              <input
+                value={g.name}
+                onChange={e => updateGroup(gi, { name: e.target.value })}
+                placeholder="Group name (e.g. Choose a Side)"
+                className={inputCls}
+                required
+              />
+              <button type="button" onClick={() => onChange(groups.filter((_, i) => i !== gi))} className="text-error p-1" title="Remove group">
+                <TrashIcon />
+              </button>
+            </div>
+            <div className="flex gap-4 items-center text-xs mb-2 flex-wrap">
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input type="checkbox" checked={g.required} onChange={e => updateGroup(gi, { required: e.target.checked })} className="accent-primary" />
+                Required
+              </label>
+              <label className="flex items-center gap-1">
+                Customer can pick
+                <select value={g.maxSelect} onChange={e => updateGroup(gi, { maxSelect: Number(e.target.value) })} className="border border-outline-variant rounded px-1 py-0.5">
+                  <option value={1}>only 1</option>
+                  <option value={2}>up to 2</option>
+                  <option value={3}>up to 3</option>
+                  <option value={0}>any number</option>
+                </select>
+              </label>
+            </div>
+            <div className="space-y-1.5">
+              {g.options.map((o, oi) => (
+                <div key={oi} className="flex gap-2 items-center">
+                  <input value={o.name} onChange={e => updateOption(gi, oi, { name: e.target.value })} placeholder="Option name" className={inputCls} required />
+                  <div className="relative w-24 flex-shrink-0">
+                    <span className="absolute left-2 top-1.5 text-xs text-on-surface-variant">+$</span>
+                    <input
+                      type="number" step="0.01" min="0"
+                      value={o.price}
+                      onChange={e => updateOption(gi, oi, { price: e.target.value })}
+                      className={`${inputCls} pl-6`}
+                    />
+                  </div>
+                  <button type="button" onClick={() => updateGroup(gi, { options: g.options.filter((_, i) => i !== oi) })} className="text-on-surface-variant hover:text-error p-1">
+                    <XIcon />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={() => updateGroup(gi, { options: [...g.options, { name: '', price: 0 }] })} className="mt-2 text-xs font-semibold text-primary flex items-center gap-1">
+              <PlusIcon /> Add option
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onChange([...groups, { name: '', required: false, maxSelect: 1, options: [{ name: '', price: 0 }] }])}
+        className="mt-2 text-sm font-semibold text-primary border border-dashed border-primary rounded-lg w-full py-2 flex items-center justify-center gap-1 hover:bg-red-50"
+      >
+        <PlusIcon /> Add a choice group
+      </button>
+    </div>
+  )
+}
+
 // ── Main AdminMenu Component ────────────────────────────────
 export default function AdminMenu() {
   const [items, setItems] = useState([])
@@ -218,7 +298,8 @@ export default function AdminMenu() {
       ...item,
       price: item.price.toString(),
       dietaryTags: (item.dietaryTags || []).join(', '),
-      imagePublicId: item.imagePublicId || ''
+      imagePublicId: item.imagePublicId || '',
+      optionGroups: item.optionGroups || []
     })
     setEditId(item._id)
     setShowForm(true)
@@ -236,7 +317,11 @@ export default function AdminMenu() {
       price: parseFloat(form.price),
       dietaryTags: form.dietaryTags
         ? form.dietaryTags.split(',').map(t => t.trim()).filter(Boolean)
-        : []
+        : [],
+      optionGroups: form.optionGroups.map(g => ({
+        ...g,
+        options: g.options.map(o => ({ ...o, price: parseFloat(o.price) || 0 }))
+      }))
     }
     try {
       if (editId) {
@@ -370,6 +455,12 @@ export default function AdminMenu() {
                 />
               </div>
 
+              {/* Add-ons */}
+              <OptionGroupsEditor
+                groups={form.optionGroups}
+                onChange={optionGroups => setForm(p => ({ ...p, optionGroups }))}
+              />
+
               {/* Toggles */}
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
@@ -457,6 +548,9 @@ export default function AdminMenu() {
                 <div className="flex items-center gap-1 flex-wrap mb-3">
                   <span className="category-badge">{item.category}</span>
                   {item.isPopular && <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-semibold">★ Popular</span>}
+                  {item.optionGroups?.length > 0 && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">{item.optionGroups.length} add-on group{item.optionGroups.length > 1 ? 's' : ''}</span>
+                  )}
                   {item.dietaryTags?.map(tag => (
                     <span key={tag} className="text-xs px-1.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">{tag}</span>
                   ))}
