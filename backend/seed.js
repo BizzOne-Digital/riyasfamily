@@ -227,7 +227,50 @@ function defaultOptions(item) {
   }
   return groups;
 }
-MENU_ITEMS.forEach(item => { item.optionGroups = defaultOptions(item); });
+// ── Stock photos (Unsplash) — replace with real dish photos in Admin → Menu Items ──
+const img = id => `https://images.unsplash.com/photo-${id}?w=600&q=80`;
+const IMAGE_RULES = [
+  [/Wings/, ['1608039755401-742074f0548d', '1527477396000-e27163b481c2']],
+  [/Rib/, ['1544025162-d76694265947']],
+  [/Steak Bites|Stroganoff/, ['1558030006-450675393462']],
+  [/Steak Sandwich|Reuben|Denver|Cuban|BLT|Beef Dip/, ['1553909489-cd47e0907980', '1528735602780-2552fd46c7af']],
+  [/Grilled Cheese/, ['1528736235302-52922df5c122']],
+  [/Philly Cheese Steak$/, ['1528735602780-2552fd46c7af']],
+  [/Poutine|Fries|Cactus/, ['1573080496219-bb080dd4f877', '1630384060421-cb20d0e0649d']],
+  [/Onion Rings|Pickles|Calamari/, ['1639024471283-03518883512d']],
+  [/Nachos|Spinach Dip/, ['1513456852971-30c0b8199d4d', '1582169296194-e4d644c48063']],
+  [/Chicken Fingers|Chicken Tenders|Veal|Liver/, ['1562967914-608f82629710']],
+  [/Fish and Chips|Trout/, ['1485921325833-c519f76c4927']],
+  [/Salmon/, ['1467003909585-2f8a72700288']],
+  [/Rib Eye|New York|Hamburger Steak|Braised Beef|Steak Salad/, ['1600891964092-4316c288032e', '1558030006-450675393462']],
+  [/Burger|on Bun/, ['1568901346375-23c9450c58cd', '1553979459-d2229ba7433b', '1571091718767-18b5b1457add']],
+  [/Quesadilla/, ['1618040996337-56904b7850b9']],
+  [/Wrap/, ['1626700051175-6818013e1d4f']],
+  [/Caesar/, ['1550304943-4f24f54ddde9', '1546793665-c74683f339c1']],
+  [/Salad/, ['1512621776951-a57141f2eefd', '1540420773420-3366772f4999']],
+  [/Lobster Bisque/, ['1547592166-23ac45744acd']],
+  [/Potato Bacon Soup/, ['1594756202469-9ff9799b2e4e']],
+  [/Soup/, ['1603105037880-880cd4edfb0d']],
+  [/Butter Chicken/, ['1603894584373-5ac82b2ae398']],
+  [/Thai Curry/, ['1455619452474-d2be8b1e70cd']],
+  [/Stir/, ['1512058564366-18510be2db19']],
+  [/Seafood/, ['1563379926898-05f4575a45d8']],
+  [/Alfredo|Tortellini|Mushroom Penne/, ['1645112411341-6c4fd023714a', '1473093295043-cdd812d0e601']],
+  [/Penne|Carbonara|Pasta/, ['1621996346565-e3dbc646d9a9']],
+];
+const ruleUse = new Map();
+function stockImage(name) {
+  const rule = IMAGE_RULES.find(([re]) => re.test(name));
+  if (!rule) return '';
+  const n = ruleUse.get(rule) || 0; // rotate so neighbouring items don't all look identical
+  ruleUse.set(rule, n + 1);
+  return img(rule[1][n % rule[1].length]);
+}
+
+MENU_ITEMS.forEach(item => {
+  item.optionGroups = defaultOptions(item);
+  if (!item.image) item.image = stockImage(item.name);
+});
 
 async function seed() {
   try {
